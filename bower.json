@@ -1,0 +1,25 @@
+{
+  "name": "MeanApp",
+  "version": "0.0.0",
+  "homepage": "https://github.com/prabinv/MeanApp",
+  "authors": [
+    "Prabin Varma <prabinv@gmail.com>"
+  ],
+  "description": "\"Web app on the MEAN stack\"",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/vendor",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.1",
+    "toastr": "~2.0.2",
+    "angular": "~1.2.16",
+    "angular-resource": "~1.2.16",
+    "angular-route": "~1.2.16"
+  }
+}
