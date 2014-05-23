@@ -1,52 +1,54 @@
-var bodyParser = require('body-parser'),
-	express = require('express'),
+var express = require('express'),
+	passport = require('passport'),
+	LocalStrategy = require('passport-local').Strategy,
+	configureExpress = require('./server/config/express'),
+	configSettings = require('./server/config/config'),
+	mongooseConfig = require('./server/config/mongoose'),
 	mongoose = require('mongoose'),
-	morgan  = require('morgan'),
-	stylus = require('stylus');
+	routesConfig = require('./server/config/routes');
 
 var env = process.env.NODE_ENV || 'development';
 
 var app = express();
 
-function compile(str, path) {
-	return stylus(str).set('filename', path);
-}
+var config = configSettings[env];
 
-// express configuration
-app.set('views', __dirname + '/server/views');
-app.set('view engine', 'jade');
-app.use(morgan());
-app.use(bodyParser());
-app.use(stylus.middleware(
-	{
-		src: __dirname + '/public',
-		compile: compile
+configureExpress(app, config);
+
+mongooseConfig(config);
+
+var User = mongoose.model('User');
+passport.use(new LocalStrategy(
+	function(username, password, done) {
+		User.findOne({userName: username}).exec(function(err, user) {
+			if (user) {
+				return done(null, user);
+			} else {
+				return done(null, false);
+			}
+
+		});
 	}
 ));
-app.use(express.static(__dirname + '/public'));
 
-if (env === 'development') {
-	mongoose.connect('mongodb://localhost/multivision');
-} else {
-	mongoose.connect('mongodb://mvadmin:multivision@ds047468.mongolab.com:47468/multivision');
-}
-
-var db = mongoose.connection;
-
-db.on('error', console.error.bind(console, 'connection error....'));
-db.once('open', function callback() {
-	console.log('multivision db opened');
+passport.serializeUser(function(user, done) {
+	if(user) {
+		done(null, user._id);
+	}
 });
 
-app.get('/partials/:partialPath', function(req, res) {
-	res.render('partials/' + req.params.partialPath);
+passport.deserializeUser(function(id, done) {
+	User.findOne({_id: id}).exec(function(err, user) {
+		if (user) {
+			return done(null, user);
+		} else {
+			return done(null, false);
+		}
+
+	});
 });
 
-app.get('*', function(req, res) {
-	res.render('index');
-});
+routesConfig(app);
 
-var port = process.env.PORT || 3030;
-app.listen(port);
-
-console.log('Listening on port ' + port);
+app.listen(config.port);
+console.log('Listening on port ' + config.port);

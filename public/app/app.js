@@ -5,7 +5,7 @@ angular.module('app').config(function($routeProvider, $locationProvider) {
 
 	$routeProvider
 		.when('/', {
-			templateUrl: '/partials/main',
+			templateUrl: '/partials/main/main',
 			controller: 'nvMainCtrl'
 		});
 });
