@@ -1,4 +1,4 @@
-angular.module('app').controller('nvMainCtrl', ['$scope', function ($scope) {
+angular.module('app').controller('mvMainCtrl', ['$scope', function ($scope) {
 	$scope.courses = [
     {
         'name': 'deserunt incididunt culpa nulla',

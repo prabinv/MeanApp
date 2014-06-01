@@ -22,6 +22,12 @@ angular.module('app').factory('mvAuth', ['$http', 'mvIdentity', '$q', 'mvUser', 
 					deferred.resolve();
 				});
 			return deferred.promise;
+		},
+		authorizeCurrentUserForRoute: function(role) {
+			if (mvIdentity.isAuthorized('admin')) {
+				return true;
+			}
+			return $q.reject('not authorized');
 		}
 	};
 }]);
