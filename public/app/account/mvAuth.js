@@ -14,6 +14,17 @@ angular.module('app').factory('mvAuth', ['$http', 'mvIdentity', '$q', 'mvUser', 
 			});
 			return deferred.promise;
 		},
+		createUser: function(userData) {
+			var deferred = $q.defer();
+			var user = new mvUser(userData);
+			user.$save().then(function() {
+				mvIdentity.currentUser = user;
+				deferred.resolve(true);
+			}, function(response) {
+				deferred.reject(response.data.reason);
+			});
+			return deferred.promise;
+		},
 		logoutUser: function logoutUser () {
 			var deferred = $q.defer();
 			$http.post('/logout', {logout: true})
